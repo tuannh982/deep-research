@@ -1,0 +1,15 @@
+{
+  "name": "deep-research",
+  "version": "0.1.0",
+  "description": "Long-running, verifiable web research for coding agents",
+  "type": "module",
+  "main": ".opencode/plugins/deep-research.js",
+  "license": "MIT",
+  "keywords": [
+    "research",
+    "citations",
+    "verification",
+    "opencode",
+    "skills"
+  ]
+}

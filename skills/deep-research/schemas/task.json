@@ -1,0 +1,46 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "task",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "type", "created_at", "updated_at", "status", "provenance",
+               "question", "depends_on", "parent", "depth", "kind", "attempts"],
+  "properties": {
+    "id": {"type": "string", "pattern": "^T-[0-9]{3,}$"},
+    "type": {"const": "task"},
+    "created_at": {"type": "string", "format": "date-time",
+                   "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$"},
+    "updated_at": {"type": "string", "format": "date-time",
+                   "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$"},
+    "status": {"enum": ["pending", "ready", "running", "done", "blocked",
+                        "stale", "abandoned"]},
+    "provenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["task", "agent"],
+      "properties": {
+        "task": {"type": ["string", "null"], "pattern": "^T-[0-9]{3,}$"},
+        "agent": {"type": ["string", "null"]}
+      }
+    },
+    "question": {"type": "string", "minLength": 1},
+    "depends_on": {
+      "type": "array", "uniqueItems": true,
+      "items": {"type": "string", "pattern": "^T-[0-9]{3,}$"}
+    },
+    "parent": {"type": ["string", "null"], "pattern": "^T-[0-9]{3,}$"},
+    "depth": {"type": "integer", "minimum": 0},
+    "kind": {"enum": ["decompose", "search", "extract", "recheck",
+                      "hypothesize", "verify", "outline", "synthesize"]},
+    "attempts": {"type": "integer", "minimum": 0},
+    "inputs": {
+      "type": "object",
+      "description": "Per-kind input payload, written only by apply.py and never by a model. An `extract` task carries {url, title, domain}; a `verify` task carries {hypothesis, refutes}. Free-form because the writer is code: the scheduler raises if a kind's required keys are absent (scheduler.agent_input), which is a stronger check than a schema over data we generated ourselves."
+    },
+    "queries": {
+      "type": "array", "items": {"type": "string", "minLength": 1},
+      "description": "For a `search` task, the queries its searcher reported issuing. Written by apply_search after the fact, which is why it is a top-level field and not part of `inputs`: `inputs` is documented as the per-kind INPUT payload, and these are output. OPTIONAL -- this schema is additionalProperties: false, so requiring it would invalidate every task already on disk; absent means \"written before this field existed, or not a search\". abandoned_reason is the same shape for the same reason. Appendix E renders these."
+    },
+    "abandoned_reason": {"type": ["string", "null"]}
+  }
+}

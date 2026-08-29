@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "hypothesis",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "type", "created_at", "updated_at", "status", "provenance",
+               "claim", "supporting", "counter", "confidence", "verdict"],
+  "properties": {
+    "id": {"type": "string", "pattern": "^H-[0-9]{3,}$"},
+    "type": {"const": "hypothesis"},
+    "created_at": {"type": "string", "format": "date-time",
+                   "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$"},
+    "updated_at": {"type": "string", "format": "date-time",
+                   "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$"},
+    "status": {"enum": ["proposed", "supported", "refuted", "contested"]},
+    "provenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["task", "agent"],
+      "properties": {
+        "task": {"type": ["string", "null"], "pattern": "^T-[0-9]{3,}$"},
+        "agent": {"type": ["string", "null"]}
+      }
+    },
+    "claim": {"type": "string", "minLength": 1},
+    "supporting": {
+      "type": "array", "uniqueItems": true,
+      "items": {"type": "string", "pattern": "^C-[0-9]{3,}$"}
+    },
+    "counter": {
+      "type": "array", "uniqueItems": true,
+      "items": {"type": "string", "pattern": "^C-[0-9]{3,}$"}
+    },
+    "confidence": {"type": "number", "minimum": 0, "maximum": 1},
+    "verdict": {"enum": ["supported", "unsupported", "contradicted", null]},
+    "verdict_reasoning": {
+      "type": ["string", "null"],
+      "description": "The adversarial verifier's own words for why it returned `verdict`, copied from artifact.verify's `reasoning` when that verdict was applied. artifact.verify.json has always described this text as journaled verbatim so that 'why is H-012 refuted' is answerable three days later, and nothing kept it: the artifact_applied journal record carries the verdict's effects, not its content, and the only surviving copy was the artifact file in inbox/applied/, which the report renderer cannot read. Appendix A prints it -- a reader auditing a claim needs the argument, not a score. OPTIONAL, and absent means 'no verdict has landed yet, or this node predates the field'. Not required, because this schema is additionalProperties: false and adding a required field retroactively invalidates every hypothesis already on disk: each drops out of Graph.readable, rescores to 0 and has its facts quarantined on the first submit after the upgrade, irreversibly, since promotion only happens when a fresh verify verdict lands. See citation.json's page_sha256 for that same mistake costed out in full, and assumption.json's `cascaded` for the same absent-means-default convention."
+    }
+  }
+}

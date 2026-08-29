@@ -1,0 +1,44 @@
+% Template for the deep-research report. render.py substitutes the
+% percent-delimited tokens below with plain str.replace -- never
+% str.format, because a LaTeX preamble is full of braces and every one
+% would need doubling. Do not write a doubled percent anywhere else in
+% this file: the end-to-end test asserts none survives substitution.
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[margin=1in]{geometry}
+\usepackage{parskip}
+\usepackage{url}
+\usepackage[hidelinks]{hyperref}
+
+% Provenance marker for a numeric claim. Gate 5 requires one on any
+% sentence stating a figure without a citation, so it has to be defined
+% here or every such section fails with "Undefined control sequence".
+% Rendered small and raised rather than hidden: the traceability is the
+% point of this report, so it belongs on the page.
+\newcommand{\factref}[1]{\,\textsuperscript{\scriptsize\texttt{#1}}}
+
+\title{%%TITLE%%}
+\date{%%DATE%%}
+
+\begin{document}
+\maketitle
+
+\section{Introduction}
+%%INTRODUCTION%%
+
+%%SECTIONS%%
+
+\section{Synthesis}
+%%SYNTHESIS%%
+
+\section{Limitations}
+%%LIMITATIONS%%
+
+%%BIBLIOGRAPHY%%
+
+\appendix
+%%APPENDICES%%
+
+\end{document}

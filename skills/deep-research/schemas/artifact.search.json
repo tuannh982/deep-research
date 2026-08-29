@@ -1,0 +1,38 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "artifact.search",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["task_id", "sources", "no_sources_reason", "queries"],
+  "anyOf": [
+    {"properties": {"sources": {"minItems": 1}}},
+    {"properties": {"no_sources_reason": {"type": "string", "minLength": 1}}}
+  ],
+  "properties": {
+    "task_id": {"type": "string", "pattern": "^T-[0-9]{3,}$"},
+    "sources": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["url", "title", "relevance", "why"],
+        "properties": {
+          "url": {"type": "string", "format": "uri", "pattern": "^https?://[^\\s/?#]+",
+                  "description": "Public web only (spec non-goals). No file://, no internal hosts. The pattern is the real check; format: \"uri\" is not evaluated without a FormatChecker."},
+          "title": {"type": "string"},
+          "relevance": {"type": "number", "minimum": 0, "maximum": 1},
+          "why": {"type": "string", "minLength": 1,
+                  "description": "What this source is expected to answer. Read by a human at the scope gate."}
+        }
+      }
+    },
+    "queries": {
+      "type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1},
+      "description": "The search strings the searcher reports having issued, AS REPORTED -- nothing in this process observes the WebSearch call, so this is the agent's own account of what it did and Appendix E says so. Required even when `sources` is empty: an empty search is exactly where a reader has to tell \"the question is exhausted\" from \"we asked badly\", and only the queries can. Without this no part of a run's literature search could be re-run or assessed for coverage, and the saturation halt was uninterpretable -- six dry tasks might mean an exhausted question or a monoculture of queries."
+    },
+    "no_sources_reason": {
+      "type": ["string", "null"],
+      "description": "Required when `sources` is empty. Found-nothing and gave-up must be distinguishable, or the loop cannot tell which branch is exhausted."
+    }
+  }
+}

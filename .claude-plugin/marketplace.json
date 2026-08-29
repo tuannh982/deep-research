@@ -1,0 +1,17 @@
+{
+  "name": "deep-research",
+  "metadata": {
+    "description": "Single-plugin marketplace for deep-research."
+  },
+  "owner": {
+    "name": "tuannh982"
+  },
+  "plugins": [
+    {
+      "name": "deep-research",
+      "source": "./",
+      "version": "0.1.0",
+      "description": "Long-running, verifiable web research that accumulates gate-checked citations and produces a synthesised PDF report."
+    }
+  ]
+}

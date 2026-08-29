@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "artifact.recheck",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["task_id", "url", "outcome", "quotes"],
+  "properties": {
+    "task_id": {"type": "string", "pattern": "^T-[0-9]{3,}$"},
+    "url": {
+      "type": "string", "pattern": "^https?://[^\\s/?#]+",
+      "description": "Echoed back from the input packet. apply_recheck compares it with the task's own inputs, so a rechecker that read a different page cannot have its answer applied to this one."
+    },
+    "outcome": {
+      "enum": ["read", "blocked", "gone"],
+      "description": "What happened when the page was fetched, judged by the agent rather than by an HTTP status code in our own client. `read` — the page came back and its text could be searched, so the per-quote verdicts below are meaningful. `blocked` — a login wall, a bot block, or a page that renders only under JavaScript; nothing can be judged, and every citation becomes `unverifiable`, which spec section 6 requires be flagged rather than silently trusted. `gone` — the page does not exist any more; every citation is rejected."
+    },
+    "quotes": {
+      "type": "array",
+      "uniqueItems": true,
+      "description": "One verdict per quote in the input packet, addressed BY INDEX. Empty when `outcome` is not `read`. The quote text is deliberately not echoed: a model asked to repeat a long verbatim span will eventually retype it slightly wrong, and a mangled echo would be indistinguishable from a genuine absence. An integer cannot be mangled.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["index", "present"],
+        "properties": {
+          "index": {"type": "integer", "minimum": 0},
+          "present": {
+            "type": "boolean",
+            "description": "true only if this exact span appears in the page text. Not 'the page says something like this' — apply_recheck turns false into a rejected citation and drops the facts resting solely on it, so a generous reading here is how a fabricated quote reaches the report."
+          }
+        }
+      }
+    },
+    "note": {
+      "type": ["string", "null"],
+      "description": "Free text, journaled. Where a rechecker says what it saw — 'the page now redirects to a paywall', 'the passage has been edited since'. Read by a human three days later, never parsed."
+    }
+  }
+}

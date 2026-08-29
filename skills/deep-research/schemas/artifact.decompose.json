@@ -1,0 +1,50 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "artifact.decompose",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["task_id", "children", "assumptions"],
+  "properties": {
+    "task_id": {"type": "string", "pattern": "^T-[0-9]{3,}$"},
+    "children": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["question", "kind", "rationale", "depends_on_index"],
+        "properties": {
+          "question": {"type": "string", "minLength": 1},
+          "kind": {
+            "enum": ["decompose", "search"],
+            "description": "Only these two. `extract` is spawned from a search result, `hypothesize` is scheduled by code once a branch has enough facts, `verify` comes from a hypothesis, `synthesize` belongs to the render phase. A decomposer creating one of those makes a task nothing feeds."
+          },
+          "rationale": {
+            "type": "string", "minLength": 1,
+            "description": "Why this child is needed to answer the parent. Breadth is unbounded by design; this obligation is one of the two things bounding it."
+          },
+          "depends_on_index": {
+            "type": "array", "uniqueItems": true,
+            "items": {"type": "integer", "minimum": 0},
+            "description": "Positions in this same `children` array. Indices, not ids: a decomposer has no graph access, so any id here would be invented."
+          }
+        }
+      }
+    },
+    "assumptions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["statement", "blocks_index"],
+        "properties": {
+          "statement": {"type": "string", "minLength": 1},
+          "blocks_index": {
+            "type": "array", "uniqueItems": true,
+            "items": {"type": "integer", "minimum": 0},
+            "description": "Positions in `children` whose validity rests on this assumption. Drives the invalidation cascade if it is later refuted."
+          }
+        }
+      }
+    }
+  }
+}

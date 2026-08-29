@@ -1,0 +1,16 @@
+{
+  "name": "deep-research",
+  "description": "Long-running, verifiable web research that accumulates gate-checked citations and produces a synthesised PDF report.",
+  "version": "0.1.0",
+  "license": "MIT",
+  "author": {
+    "name": "tuannh982"
+  },
+  "keywords": [
+    "research",
+    "citations",
+    "verification",
+    "report",
+    "long-running"
+  ]
+}

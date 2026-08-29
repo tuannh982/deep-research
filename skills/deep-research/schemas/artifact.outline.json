@@ -1,0 +1,38 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "artifact.outline",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["task_id", "sections"],
+  "properties": {
+    "task_id": {"type": "string", "pattern": "^T-[0-9]{3,}$"},
+    "sections": {
+      "type": "array",
+      "minItems": 1,
+      "description": "Every section from the input, in the order they should appear in the report. Spec section 7: the outliner may reorder and retitle, and nothing else. outline.validate is the real check — this schema only fixes the shape, it cannot tell a dropped hypothesis from a short outline.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "title", "hypotheses", "facts"],
+        "properties": {
+          "id": {
+            "type": "string", "pattern": "^S-[0-9]{3,}$",
+            "description": "Copied verbatim from the input. Section ids are assigned by code from the graph's theme order and are not the outliner's to choose."
+          },
+          "title": {
+            "type": "string", "minLength": 1, "pattern": "\\S",
+            "description": "The section heading. May be rewritten for readability. The pattern rejects a title that is only whitespace, which minLength alone admits."
+          },
+          "hypotheses": {
+            "type": "array", "uniqueItems": true,
+            "items": {"type": "string", "pattern": "^H-[0-9]{3,}$"}
+          },
+          "facts": {
+            "type": "array", "uniqueItems": true,
+            "items": {"type": "string", "pattern": "^F-[0-9]{3,}$"}
+          }
+        }
+      }
+    }
+  }
+}

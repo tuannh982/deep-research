@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "artifact.extract",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["task_id", "url", "facts", "no_facts_reason", "published_at",
+               "source_type"],
+  "anyOf": [
+    {"properties": {"facts": {"minItems": 1}}},
+    {"properties": {"no_facts_reason": {"type": "string", "minLength": 1}}}
+  ],
+  "properties": {
+    "task_id": {"type": "string", "pattern": "^T-[0-9]{3,}$"},
+    "url": {"type": "string", "format": "uri", "pattern": "^https?://[^\\s/?#]+",
+            "description": "The single page this task was given. A separate re-check agent re-reads exactly this page on a later tick and confirms each quote against it (gate 2). The pattern is the real check; format: \"uri\" is not evaluated without a FormatChecker."},
+    "facts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["statement", "quote"],
+        "properties": {
+          "statement": {"type": "string", "minLength": 1},
+          "quote": {
+            "type": "string", "minLength": 8,
+            "pattern": "([^\\s\\u00ad\\u200b-\\u200f\\u2060-\\u2064\\ufeff][\\s\\u00ad\\u200b-\\u200f\\u2060-\\u2064\\ufeff]*){8}",
+            "description": "A verbatim span of the page, copied not paraphrased. A separate re-check agent re-reads the page and confirms this span is really there (gate 2). minLength alone does not close the gap — eight spaces, or eight zero-width spaces, satisfy it but carry no content. The pattern requires 8 characters that are neither whitespace nor zero-width, matching evidence.MIN_QUOTE_CHARS / evidence.meaningful_length, which apply_extract enforces independently. Below that a span is a substring of almost any page, so finding it is not evidence of anything; 8 still admits a genuinely terse quotation like \"42ms at p99\"."
+          }
+        }
+      }
+    },
+    "no_facts_reason": {"type": ["string", "null"]},
+    "source_type": {
+      "enum": ["primary", "secondary", "unknown"],
+      "description": "Whether the page presents its own work or relays someone else's. `primary` - a specification, a paper, official documentation for the thing it documents, a measurement the page itself performed. `secondary` - it reports, summarises or cites work done elsewhere, however authoritative the outlet: the distinction is PROVENANCE, not quality. `unknown` when the page does not make it clear, and that is an honest answer rather than a lean towards `secondary`. Required so the extractor answers rather than omits; an artifact is transient, so a rejection re-emits the task with the validator error and the retry carries it. Nothing GATES on this - see citation.json."
+    },
+    "published_at": {
+      "type": ["string", "null"], "pattern": "^[0-9]{4}(-[0-9]{2}(-[0-9]{2})?)?$",
+      "description": "When the page says it was published, or null. REQUIRED so the extractor has to answer the question rather than silently omit it, and nullable because most honest answers are null — a \"last updated\" banner, a copyright year and a comment timestamp are none of them publication dates, and a date inferred is a date invented that a bibliography then prints as fact. Partial dates are legal (2019, 2019-03, 2019-03-04): many pages give only a year, and demanding a full date makes a model fabricate a month and a day to satisfy the schema. Requiring a NEW field is safe here in a way it would not be on citation.json: an artifact is transient, gate 1 validates and never stores it, and a rejection re-emits the task with the validator error so the retry carries it."
+    }
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "artifact.verify",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["task_id", "hypothesis", "verdict", "failing_citations",
+               "reasoning"],
+  "properties": {
+    "task_id": {"type": "string", "pattern": "^T-[0-9]{3,}$"},
+    "hypothesis": {"type": "string", "pattern": "^H-[0-9]{3,}$"},
+    "verdict": {
+      "enum": ["supported", "unsupported", "contradicted"],
+      "description": "Spec section 6 fixes all three and what each does to the graph. supported -> verdict recorded, confidence recomputed. unsupported -> demoted to an open assumption, a search task spawned. contradicted -> refuted, and if an assumption rested on it the invalidation cascade runs."
+    },
+    "failing_citations": {
+      "type": "array", "uniqueItems": true,
+      "items": {"type": "string", "pattern": "^C-[0-9]{3,}$"},
+      "description": "Supporting citations from the input packet that the verifier judges do not actually support the claim. Marked `rejected`, which drops them from live_citations and lowers the score. Naming a `counter` citation here is not honoured: a counter citation is evidence against the claim, and the verifier's job is to judge the claim, not erase opposition."
+    },
+    "reasoning": {
+      "type": "string", "minLength": 1,
+      "description": "Journaled verbatim. 'Why is H-012 refuted' must be answerable three days later."
+    }
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "artifact.synthesize",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["task_id", "section", "body"],
+  "properties": {
+    "task_id": {"type": "string", "pattern": "^T-[0-9]{3,}$"},
+    "section": {
+      "type": "string", "pattern": "^S-[0-9]{3,}$",
+      "description": "Echoed back from the input packet. apply_synthesize checks it against the task's own inputs, so a synthesizer answering for the wrong section cannot overwrite another section's file."
+    },
+    "body": {
+      "type": "string",
+      "minLength": 40,
+      "pattern": "(\\S\\s*){40}",
+      "description": "LaTeX prose for this section, and nothing else: no \\section heading (render emits that from the validated title), no preamble, no \\begin{document}. The only commands permitted are \\cite{} and \\factref{}; gate 5 checks the keys and latex.escape neutralises everything else. minLength counts characters including whitespace, so the pattern re-checks 40 characters of actual content — 200 spaces passes the first and fails the second."
+    }
+  }
+}

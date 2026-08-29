@@ -1,0 +1,19 @@
+[project]
+name = "deep-research-skill"
+version = "0.1.0"
+requires-python = ">=3.11"
+dependencies = [
+    "jsonschema>=4.21",
+    "publicsuffix2>=2.20191221",
+    "pyyaml>=6.0",
+]
+
+[dependency-groups]
+dev = ["pytest>=8.0"]
+
+[tool.pytest.ini_options]
+pythonpath = ["scripts"]
+testpaths = ["tests"]
+markers = [
+    "real_tectonic: shells out to a real tectonic binary; skipped when absent",
+]

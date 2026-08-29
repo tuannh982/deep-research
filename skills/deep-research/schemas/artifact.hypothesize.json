@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "artifact.hypothesize",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["task_id", "hypotheses", "no_hypotheses_reason"],
+  "anyOf": [
+    {"properties": {"hypotheses": {"minItems": 1}}},
+    {"properties": {"no_hypotheses_reason": {"type": "string", "minLength": 1}}}
+  ],
+  "properties": {
+    "task_id": {"type": "string", "pattern": "^T-[0-9]{3,}$"},
+    "hypotheses": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["claim", "supporting", "counter", "refutes"],
+        "properties": {
+          "claim": {"type": "string", "minLength": 1},
+          "supporting": {
+            "type": "array", "minItems": 1, "uniqueItems": true,
+            "items": {"type": "string", "pattern": "^C-[0-9]{3,}$"},
+            "description": "Citation ids from this task's input packet. A claim with no evidence is not a hypothesis; it would score 0.0 and be demoted on the next recompute."
+          },
+          "counter": {
+            "type": "array", "uniqueItems": true,
+            "items": {"type": "string", "pattern": "^C-[0-9]{3,}$"}
+          },
+          "refutes": {
+            "type": ["string", "null"], "pattern": "^A-[0-9]{3,}$",
+            "description": "An open assumption from the input packet that this claim contradicts, or null. Only a proposal: code sets assumption.refuted_by and runs the cascade if and only if the verifier returns `contradicted`."
+          }
+        }
+      }
+    },
+    "no_hypotheses_reason": {"type": ["string", "null"]}
+  }
+}
