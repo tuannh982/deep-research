@@ -5,6 +5,14 @@
   "type": "module",
   "main": ".opencode/plugins/deep-research.js",
   "license": "MIT",
+  "homepage": "https://github.com/tuannh982/deep-research",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tuannh982/deep-research.git"
+  },
+  "bugs": {
+    "url": "https://github.com/tuannh982/deep-research/issues"
+  },
   "keywords": [
     "research",
     "citations",

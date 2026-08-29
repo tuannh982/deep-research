@@ -4,7 +4,8 @@
     "description": "Single-plugin marketplace for deep-research."
   },
   "owner": {
-    "name": "tuannh982"
+    "name": "tuannh982",
+    "url": "https://github.com/tuannh982/deep-research"
   },
   "plugins": [
     {

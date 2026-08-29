@@ -1,11 +1,17 @@
 # Installing deep-research for opencode
 
-Add this package to the `plugin` array in your `opencode.json` — global or
-project-level:
+This package is not on npm, so opencode installs it from a clone:
+
+```bash
+git clone https://github.com/tuannh982/deep-research
+```
+
+Add that clone's absolute path to the `plugin` array in your `opencode.json`
+— global or project-level:
 
 ```json
 {
-  "plugin": ["/absolute/path/to/deep-research"]
+  "plugin": ["/absolute/path/to/your/clone/deep-research"]
 }
 ```
 

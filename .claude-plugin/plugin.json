@@ -3,8 +3,11 @@
   "description": "Long-running, verifiable web research that accumulates gate-checked citations and produces a synthesised PDF report.",
   "version": "0.1.0",
   "license": "MIT",
+  "homepage": "https://github.com/tuannh982/deep-research",
+  "repository": "https://github.com/tuannh982/deep-research",
   "author": {
-    "name": "tuannh982"
+    "name": "tuannh982",
+    "url": "https://github.com/tuannh982"
   },
   "keywords": [
     "research",

@@ -25,7 +25,7 @@ what to work on next.
 ## Install — Claude Code
 
 ```
-/plugin marketplace add path/to/plugin/deep-research
+/plugin marketplace add tuannh982/deep-research
 /plugin install deep-research
 ```
 
@@ -37,17 +37,24 @@ that symlink or copy first. Otherwise it now points at a directory with no
 
 ## Install — opencode
 
-Add to the `plugin` array in your `opencode.json`:
+This package is not on npm, so opencode installs it from a clone:
+
+```bash
+git clone https://github.com/tuannh982/deep-research
+```
+
+Then point the `plugin` array in your `opencode.json` at that clone, by
+absolute path:
 
 ```json
 {
-  "plugin": ["path/to/plugin/deep-research"]
+  "plugin": ["/absolute/path/to/your/clone/deep-research"]
 }
 ```
 
 Restart opencode. See [`docs/README.opencode.md`](docs/README.opencode.md)
 for the full guide, including how the dispatch packet's Claude Code tool
-names map onto opencode's.
+names map onto opencode's, and what has and has not been verified.
 
 ## Layout
 
@@ -64,10 +71,13 @@ docs/                         specs, plans, execution logs
 
 ## Updating
 
-`/plugin marketplace add <dir>` snapshots this directory into
-`~/.claude/plugins/cache/` — it is a copy, not a live reference. Pulling new
-commits does not reach the installed plugin. After pulling, run
+`/plugin marketplace add` snapshots the source into
+`~/.claude/plugins/cache/` — it is a copy, not a live reference. New commits
+on GitHub do not reach the installed plugin on their own. Run
 `/plugin marketplace update deep-research` to refresh the snapshot.
+
+On opencode the plugin is loaded from your clone, so `git pull` in the clone
+and restart opencode.
 
 ## Tests
 
@@ -75,11 +85,3 @@ commits does not reach the installed plugin. After pulling, run
 cd skills/deep-research
 uv run --with pytest --with jsonschema --with publicsuffix2 --with pyyaml python -m pytest -q
 ```
-
-## Status
-
-The Claude Code path is exercised. The opencode path is written from
-opencode's documented tool names, and the `config` hook's directory
-registration has been checked under Node, but **the research loop has not
-been run under opencode**. See the "What is verified, and what is not"
-section of [`docs/README.opencode.md`](docs/README.opencode.md).

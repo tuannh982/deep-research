@@ -2,14 +2,25 @@
 
 ## Installation
 
-Add the package to the `plugin` array in your `opencode.json` — global or
-project-level:
+This package is not published to npm, so opencode installs it from a clone:
+
+```bash
+git clone https://github.com/tuannh982/deep-research
+```
+
+Then add that clone's absolute path to the `plugin` array in your
+`opencode.json` — global or project-level:
 
 ```json
 {
-  "plugin": ["/path/to/plugin/deep-research"]
+  "plugin": ["/absolute/path/to/your/clone/deep-research"]
 }
 ```
+
+The path must be absolute, and must point at the repo root — the directory
+holding `package.json`. The plugin resolves `skills/` relative to its own
+file, so copying `.opencode/plugins/deep-research.js` somewhere else on its
+own will not work; opencode has to load it from inside the clone.
 
 Restart opencode. The plugin registers this repo's `skills/` directory with
 opencode's `config` hook, so opencode's own skill loader can find both
@@ -79,6 +90,11 @@ performed. Registering the directory is a much smaller claim than either
 opencode actually loading a skill from it or the loop behaving equivalently
 — and neither of those has been observed.
 
+**Also not verified:** the install itself. opencode documents the `plugin`
+array as taking npm package names; an absolute local path is not in the
+documented set. It is the only route available while this package is off
+npm, but if your version of opencode rejects it, that is why.
+
 ## Troubleshooting
 
 **Plugin not loading** — check the path in `opencode.json` is absolute and
@@ -95,6 +111,7 @@ cannot check for it, because it is not a program on `PATH`.
 
 ## Getting help
 
-There is no issue tracker for this package. Whoever you ask will need the
-output of `research status` and `research fsck` from the affected run —
-gather both before asking.
+Open an issue at
+[github.com/tuannh982/deep-research](https://github.com/tuannh982/deep-research/issues).
+Include the output of `research status` and `research fsck` from the
+affected run — gather both before filing.
